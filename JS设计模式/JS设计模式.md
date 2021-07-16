@@ -103,3 +103,164 @@ b.name // jack
 - 在对象A.prototype中找到name属性,并返回它的值.
 
 最后,原型链并不是无限长的,当访问对象a一个它自身和原型都不存在的属性,则会到Object.prototype中查找,当还是不存在时,因为Object.prototype的原型是null,之后再无别的节点,最好的结果就是`undefined`
+
+## this, call和apply
+
+### this
+
+​	和别的语言不一样,JS的this总是指向一个对象,而具体指向哪个对象,是在运行时基于函数的执行环境动态绑定的,而非函数被声明时的环境.
+
+#### this的指向
+
+1. 作为对象的方法调用
+
+```
+当函数作为对象的方法被调用时,this指向该对象
+
+var obj ={
+	name:'jack',
+	getName:function(){
+		console.log( this === obj ) //true
+		console.log( this.a )  // jack
+	}
+}
+
+obj.getName()
+```
+
+
+
+2. 作为普通函数调用
+
+```
+当函数不作为对象的属性被调用,也就是普通函数方式,此时的this总是指向全局对象.在JS中全局对象就是window
+
+window.name = 'jack'
+var getName = function(){
+	return this.name
+}
+getName()   // jack
+
+or
+
+window.name = 'marco'
+var obj = {
+	name:'jack'
+	getName:function(){
+		return this.name
+	}
+}
+var myName = obj.getName  
+myName()  // marco
+
+```
+
+​	在es5的strict模式下,this在默认下指向undefined
+
+3. 构造器调用
+
+   JS没有类,但可以从构造器中创建对象,同时也有new运算符
+
+   当new调用构造函数时,改函数总会返回一个对象,这时函数中的this就会指向这个对象.
+
+```
+
+var myClass=function(){
+	this.name = 'king'
+}
+var obj = new myClass()
+obj.name  // king
+
+```
+
+​		但在构造器显式的返回一个对象时,那么此次运算最终会返回这个对象,而this也将指向这个对象
+
+```
+var myClass=function(){
+	this.name = 'king'
+	return {
+		name:'jack'
+	}
+}
+var obj = new myClass()
+obj.name  // jack
+```
+
+​		若构造器显式返回的不是一个对象,或没有返回,则不会出现上面的情况
+
+4. call或apply调用	
+
+   call和apply可以动态的改变传入的this.
+
+``` 
+var obj1 = {
+	name:'jack'
+	getName:function(){
+		return this.name
+	}
+}
+
+var obj2 = {
+	name:'marco'
+}
+
+obj1.getName()  // jack
+obj1.getName.call( obj2 )  // marco
+```
+
+#### call和apply的区别
+
+call和apply的作用是一样的,不同点在于传入参数的方式
+
+1. apply接受两个参数,第一个是指定函数体内this对象的指向,第二个参数为数组或类数组,apply会把这个数组中的元素作为参数传入被调用的函数
+
+```
+var func = function (a,b,c){
+	return [a,b,c]
+}
+func.apply(null,[1,2,3])  // [1,2,3]
+```
+
+2. call传入的参数不固定,和apply不同,从第二个参数开始,依次作为参数传入被调用的函数
+
+```
+var func = function (a,b,c){
+	return [a,b,c]
+}
+func.call(null,1,2,3)  // [1,2,3]
+```
+
+​	更多的时候,我们并不关心有多少参数传入,只用apply一股脑的推过去就可以了.
+
+#### call和apply的用途
+
+1. 改变this的指向
+
+2. 实现bind
+
+   大部分的高级浏览器都实现了内置bind,这里我们模拟一个bind
+
+```
+Function.prototype.bind = function(){
+	var self = this,
+		context = [].shift.call(arguments),
+		args = [].slice.call(arguments);
+	retrun function(){
+		return self.apply(context,[].concat.call(args,[].slice.call( arguments )))
+	}
+}
+
+var obj = {
+	name : 'jack'
+}
+
+var func = function(){
+console.log(this.name,[a,b,c])  
+}.bind(obj,1,2)
+
+func(3)  // jack [1,2,3]
+```
+
+
+
+1. 借用其他对象的方法
