@@ -60,7 +60,7 @@
 ​	页面需要导出一个名为`getStaticProps`的异步函数,这会在构建的时候使用返回的props预先呈现页面
 
 ```
-export async getStaticProps(context){
+export async function getStaticProps(context){
 	return {
 		props:{}  //必须返回props:{}的形式
 	}
@@ -83,7 +83,7 @@ export async getStaticProps(context){
 ​		tips: 是在`user`文件夹下名为 `[id].js`
 
 ```
-export async getStaticPaths(context){
+export async function getStaticPaths(context){
 	return {
 		paths:[
 			{ params:{ id:'1' } },
