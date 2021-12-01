@@ -9,7 +9,7 @@
 - git reset Head^  回到上一提交版本
 - git reset --hard {版本号|HEAD}  回到指定版本|
 - git add -A  暂存所有更改
-- git remote rm {name}  删除远程分支
+- git push origin --delete {name}  删除远程分支
 - git checkout -b {local} origin/{remote}  创建一个新分支并关联远程分支
 - git branch -D {name}  删除本地分支
 
