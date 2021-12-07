@@ -1,38 +1,77 @@
 <template>
-  <template v-for="(item, index) in menuList" :key="index">
+  <template v-for="item in meuns" :key="item.path">
     <!-- 遍历路由表，生成左侧菜单 -->
     <template v-if="item.children && item.children.length > 0">
-      <a-sub-menu>
+      <a-sub-menu :key="item.path">
         <template #title>
+          <user-outlined v-if="item.icon" />
           <span>
-            <user-outlined />
             {{ item.name }}
           </span>
         </template>
-
-        <a-menu-item
-          v-for="childItem in item.children"
-          :key="item.children + '/' + childItem.path"
-          >{{ childItem.name }}</a-menu-item
-        >
+        <template v-for="childItem in item.children" :key="childItem.path">
+          <template v-if="childItem.children && childItem.children.length > 0">
+            <SideMenu :routes="[childItem]" />
+          </template>
+          <template v-else>
+            <a-menu-item :key="childItem.path">
+              <span>
+                <router-link :to="childItem.path">{{
+                  childItem.name
+                }}</router-link>
+              </span>
+            </a-menu-item>
+          </template>
+        </template>
       </a-sub-menu>
     </template>
     <template v-else>
-      <a-menu-item>
-        <span>{{ item.name }}</span>
+      <a-menu-item :key="item.path" v-if="!item.hidden">
+        <user-outlined v-if="item.icon" />
+        <span>
+          <router-link :to="item.path">{{ item.name }}</router-link>
+        </span>
       </a-menu-item>
     </template>
   </template>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
-
-export default defineComponent({
-  setup() {
-    onMounted(() => {});
-
-    return {};
+import { UserOutlined } from "@ant-design/icons-vue";
+export default {
+  components: {
+    UserOutlined,
   },
-});
+  props: {
+    routes: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
+  data() {
+    return { meuns: [] };
+  },
+
+  mounted() {
+    this.meuns = this.routes;
+  },
+};
 </script>
+
+<style lang="less">
+.ant-menu-item {
+  a {
+    color: #ffffffa6;
+  }
+  a:hover {
+    color: #fff;
+  }
+}
+
+.ant-menu-item-selected {
+  a {
+    color: #fff;
+  }
+}
+</style>

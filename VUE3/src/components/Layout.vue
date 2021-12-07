@@ -3,6 +3,7 @@
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
       <div class="logo" />
       <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
+        <SideMenu :routes="menuList"></SideMenu>
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -26,24 +27,34 @@
           minHeight: 'calc(100vh - 112px)',
         }"
       >
-        Content
+        <router-view />
       </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
 <script>
 import { defineComponent, ref, onMounted } from "vue";
+import { permissionRouter } from "@/router";
 import { routes } from "@/router";
-import {SideMenu}
+import SideMenu from "@/components/SideMenu.vue";
+
+import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
+
 export default defineComponent({
+  components: {
+    MenuUnfoldOutlined,
+    MenuFoldOutlined,
+    SideMenu,
+  },
+
   setup() {
     onMounted(() => {
-      console.log(routes);
+      // console.log(routes);
     });
 
     return {
       menuList: ref(routes),
-      selectedKeys: ref(["1"]),
+      selectedKeys: ref(["/"]),
       collapsed: ref(false),
     };
   },
