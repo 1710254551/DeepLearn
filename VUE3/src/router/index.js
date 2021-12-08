@@ -10,7 +10,7 @@ const routes = [
     component: Login,
   },
   {
-    path: "/",
+    path: "/home",
     hidden: true,
     component: Layout,
   },
@@ -42,10 +42,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  let userId = localStorage.getItem("userId");
-  if (to.path === "/login") next();
-  if (userId) {
-    next();
+  let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  if (!userInfo.name && to.path === "/login") next();
+  if (userInfo.name || to.path !== "/login") next();
+
+  if (userInfo.name) {
+    next({ path: "/home" });
   } else {
     next({ path: "/login" });
   }
