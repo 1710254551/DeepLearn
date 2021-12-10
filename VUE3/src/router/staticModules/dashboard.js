@@ -1,4 +1,5 @@
 import Home from "../../views/Home.vue";
+import Home23 from "../../views/Home23.vue";
 import Layout from "../../views/content.vue";
 
 const routeName = "dashboard";
@@ -30,7 +31,7 @@ const routes = [
           title: "首页2",
           icon: "icon-shouye",
         },
-        component: Home,
+        component: Home23,
       },
     ],
   },
