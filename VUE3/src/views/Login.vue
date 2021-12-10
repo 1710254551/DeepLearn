@@ -66,7 +66,7 @@ export default defineComponent({
         .then((res) => {
           localStorage.setItem("userInfo", JSON.stringify(res));
           setTimeout(() => {
-            router.push({ path: "/home" });
+            router.push({ path: "/" });
           }, 1000);
           // console.log(res, toRaw(modelRef));
         })

@@ -1,38 +1,25 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
 import Layout from "../components/Layout.vue";
+import common from "./staticModules/index.js";
 import Login from "../views/Login.vue";
 
-const routes = [
+const allowList = ["login", "icons", "error", "error-404"]; // no redirect whitelist
+
+export const routes = [
+  {
+    path: "/",
+    name: "Layout",
+    redirect: "/dashboard",
+    component: Layout,
+    meta: {
+      title: "首页",
+    },
+    children: [...common],
+  },
   {
     path: "/login",
-    hidden: true,
+    name: "login",
     component: Login,
-  },
-  {
-    path: "/home",
-    hidden: true,
-    component: Layout,
-  },
-  {
-    path: "/view",
-    name: "view",
-    icon: true,
-    component: Layout,
-    children: [
-      {
-        name: "My",
-        path: "/view/my",
-        component: Home,
-        children: [
-          {
-            name: "VIP",
-            path: "/view/my/vip",
-            component: Home,
-          },
-        ],
-      },
-    ],
   },
 ];
 
@@ -42,17 +29,23 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  let userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
 
-  if (!userInfo.name && to.path === "/login") next();
-  if (userInfo.name || to.path !== "/login") next();
-
-  if (userInfo.name) {
-    next({ path: "/home" });
+  if (userInfo) {
+    if (to.path === "/login") {
+      next({ path: "/dashboard" });
+    } else {
+      console.log(to.path);
+      next();
+    }
   } else {
-    next({ path: "/login" });
+    if (allowList.includes(to.name)) {
+      // 在免登录名单，直接进入
+      next();
+    } else {
+      next({ path: "/login", replace: true });
+    }
   }
 });
 
 export default router;
-export { routes };

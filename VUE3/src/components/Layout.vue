@@ -2,9 +2,7 @@
   <a-layout>
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
       <div class="logo" />
-      <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
-        <SideMenu :routes="menuList"></SideMenu>
-      </a-menu>
+      <Menu></Menu>
     </a-layout-sider>
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0">
@@ -33,10 +31,9 @@
   </a-layout>
 </template>
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref } from "vue";
 import { permissionRouter } from "@/router";
-import { routes } from "@/router";
-import SideMenu from "@/components/SideMenu.vue";
+import menu from "./menu/menu";
 
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
 
@@ -44,17 +41,11 @@ export default defineComponent({
   components: {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
-    SideMenu,
+    Menu: menu,
   },
 
   setup() {
-    onMounted(() => {
-      // console.log(routes);
-    });
-
     return {
-      menuList: ref(routes),
-      selectedKeys: ref(["/"]),
       collapsed: ref(false),
     };
   },
